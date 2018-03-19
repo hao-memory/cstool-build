@@ -1,0 +1,24 @@
+{
+  "extends": "eslint-config-airbnb/base",
+  "parser": "babel-eslint",
+  "rules": {
+    "no-console": [0],
+    "space-before-function-paren": [2, "never"],
+    "max-len": [2, 120, 2],
+    // 不对数组或对象末尾逗号做强制要求
+    "comma-dangle": [1, "never"],
+    // 不对注释前的空格做强制要求
+    "spaced-comment": [0, "always"],
+    // 允许使用匿名函数,
+    "func-names": 0,
+    // 控制逗号前后的空格
+    "comma-spacing": [2, { "before": false, "after": true }],
+    // 双峰驼命名格式
+    "camelcase": 2,
+    //大括号内是否允许不必要的空格
+    "object-curly-spacing": [0, "never"]
+  },
+  "ecmaFeatures": {
+    "experimentalObjectRestSpread": true
+  }
+}

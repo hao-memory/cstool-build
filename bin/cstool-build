@@ -1,0 +1,102 @@
+#!/usr/bin/env node
+
+const program = require('commander');
+
+program
+  .version(require('../package').version, '-v, --version')
+  .option('-o, --output-path <path>', 'output path')
+  .option('-w, --watch [delay]', 'watch file changes and rebuild')
+  .option('--hash', 'build with hash and output map.json')
+  .option('--publicPath <publicPath>', 'publicPath for webpack')
+  .option('--devtool <devtool>', 'sourcemap generate method, default is null')
+  .option('--config <path>', 'custom config path, default is webpack.config.js')
+  .option('--unExact', 'unExact common,default false')
+  //.option('--no-compress', 'build without compress')
+  //.option('--json', 'running webpack with --json, ex. result.json')
+  .option('--verbose', 'run with more logging messages.')
+  .option('--server', 'run with server.')
+  .option('--cdn', 'static cdn.')
+  .option('--port <port>', 'server port')
+  .option('--customEntry', 'custom entry.')
+  .option('--clearCache', 'clear cache, remove node_modules of dirs')
+  .option('--useRem', 'user rem instead px(base is 75).')
+  .option('--baseDir <baseDir>', 'base dir')
+  .option('--packageName <packageName>', 'package name, default package.json name')
+  .option('--env <env>', 'one of ["dev", "uat1", "stg", "prd"]')
+  .option('--hot <hot>', 'hot update(only on --server on), default true')
+  .option('--append', 'append file to dist')
+  .option('--local', 'access page like local file')
+  .parse(process.argv);
+
+program.cwd = process.cwd();
+
+let retVal = {
+  next() {
+
+  }
+};
+const endProcess = (result) => {
+  if (result.value) {
+    console.log(`${result.value} generating ...`);
+  }
+  if (result.done) {
+    console.log('build completed.');
+    process.exit(0);
+  }
+};
+
+const normalProcess = () => {
+  require('../lib/build')(program, (err) => {
+    if (err) {
+      console.err('normalProcess', err);
+    }
+    endProcess(retVal.next());
+  });
+  return 'dist';
+};
+const remoteProcess = () => {
+  require('../lib/build-remote')(program, (err) => {
+    if (err) {
+      console.err('remoteProcess', err);
+    }
+    endProcess(retVal.next());
+  });
+  return 'dist-remote';
+};
+const localProcess = () => {
+  require('../lib/build-local')(program, (err) => {
+    if (err) {
+      console.err('localProcess', err);
+    }
+    endProcess(retVal.next());
+  });
+  return 'dist-local';
+};
+const zipProcess = () => {
+  require('../lib/build-zip')(program, (err) => {
+    if (err) {
+      console.err('zipProcess', err);
+    }
+    endProcess(retVal.next());
+  });
+  return 'zip';
+};
+
+function* allProcess() {
+  if (program.env === 'prd' || program.env === 'stg' || program.env === 'uat1') {
+    program.compress = true;
+  }
+  yield normalProcess();
+  if (program.local) {
+    // yield remoteProcess();
+    yield localProcess();
+    yield zipProcess();
+  }
+}
+
+if (program.server || program.watch) {
+  require('../lib/build')(program);
+} else {
+  retVal = allProcess();
+  endProcess(retVal.next());
+}

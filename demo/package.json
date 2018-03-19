@@ -1,0 +1,13 @@
+{
+  "name": "demo",
+  "version": "0.1.0",
+  "description": "测试配置文件",
+  "author": "land <pengfei.cai@chinaredstar.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "del": "^2.2.2"
+  },
+  "dependencies": {
+    "antd": "2.8.1"
+  }
+}
