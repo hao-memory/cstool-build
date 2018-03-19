@@ -2,7 +2,7 @@
   "name": "cstool-build",
   "version": "0.0.3",
   "description": "基于webpack的构建工具",
-  "author": "land <mzhanghaom@126.com>",
+  "author": "land <czhanghaoc@126.com>",
   "license": "MIT",
   "bin": {
     "cstool-build": "./bin/cstool-build"
